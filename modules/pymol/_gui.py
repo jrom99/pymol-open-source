@@ -6,9 +6,8 @@ import sys
 import os
 import webbrowser
 
-from pymol.constants import APPAUTHOR, APPNAME
-from platformdirs import user_cache_dir
-
+from pymol.Qt import QtCore
+QStandardPaths = QtCore.QStandardPaths
 
 
 class PyMOLDesktopGUI(object):
@@ -995,7 +994,7 @@ class PyMOLDesktopGUI(object):
             if os.path.exists(legacy_dir):
                 return os.path.join(legacy_dir, db_filename)
 
-            xdg_cache_dir = user_cache_dir(APPNAME, APPAUTHOR, ensure_exists=True)
+            xdg_cache_dir = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.CacheLocation)
             return os.path.expanduser(os.path.join(xdg_cache_dir, db_filename))
 
         db_file = _get_db_filepath()

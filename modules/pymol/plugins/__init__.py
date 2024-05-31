@@ -11,11 +11,11 @@ import sys
 import pymol
 from pymol import cmd
 from pymol import colorprinting
-from pymol.constants import APPNAME, APPAUTHOR
+from pymol.Qt import QtCore
+QStandardPaths = QtCore.QStandardPaths
 
 from .legacysupport import *
 
-from platformdirs import user_data_dir
 
 # variables
 def _get_pymolpluginsrc_path():
@@ -23,7 +23,7 @@ def _get_pymolpluginsrc_path():
     if os.path.exists(legacy_file):
         return legacy_file
 
-    xdg_data_dir = user_data_dir(APPNAME, APPAUTHOR, ensure_exists=True)
+    xdg_data_dir = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation)
     return os.path.expanduser(os.path.join(xdg_data_dir, "pymolpluginsrc.py"))
 
 PYMOLPLUGINSRC = _get_pymolpluginsrc_path()

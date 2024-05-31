@@ -7,9 +7,9 @@ License: BSD-2-Clause
 '''
 
 import os
+from pymol.Qt import QtCore
+QStandardPaths = QtCore.QStandardPaths
 
-from pymol.constants import APPNAME, APPAUTHOR
-from platformdirs import user_data_dir
 
 # supported file types for installation. Do not support pyc and pyo binaries,
 # we want text files that can be parsed for metadata.
@@ -31,7 +31,7 @@ def get_default_user_plugin_path():
     if os.path.exists(legacy_dir):
         return os.path.join(legacy_dir, dirname)
 
-    xdg_data_dir = user_data_dir(APPNAME, APPAUTHOR, ensure_exists=True)
+    xdg_data_dir = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation)
     return os.path.expanduser(os.path.join(xdg_data_dir, dirname))
 
 
