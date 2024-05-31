@@ -101,7 +101,7 @@ def pref_save(filename=PYMOLPLUGINSRC, quiet=1):
     f.close()
 
     if not int(quiet):
-        print(' Plugin settings saved!')
+        print(f' Plugin settings saved to {filename}!')
 
 def set_pref_changed():
     if pref_get('instantsave', True):
