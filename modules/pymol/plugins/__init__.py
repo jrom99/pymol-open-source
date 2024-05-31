@@ -83,6 +83,7 @@ def pref_save(filename=PYMOLPLUGINSRC, quiet=1):
     repr = pprint.pformat
 
     try:
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
         f = open(cmd.exp_path(filename), 'w')
     except IOError:
         print(' Plugin-Error: Cannot write Plugins resource file to', filename)
