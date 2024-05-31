@@ -662,11 +662,10 @@ distribution = setup(  # Distribution meta-data
                  "It excels at 3D visualization of proteins, small molecules, density, "
                  "surfaces, and trajectories. It also includes molecular editing, "
                  "ray tracing, and movies. Open Source PyMOL is free to everyone!"),
-
+    install_requires=['platformdirs'],
     package_dir=package_dir,
     packages=list(package_dir),
     package_data={'pmg_qt': ['forms/*.ui']},
-
     ext_modules=ext_modules,
     data_files=data_files,
 )

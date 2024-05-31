@@ -6,6 +6,10 @@ from .shortcut import Shortcut
 from .constants_palette import palette_dict
 import re
 
+
+APPNAME = "pymol"
+APPAUTHOR = "Schrodinger"
+
 class _loadable:
     pdb = 0
     mol = 1

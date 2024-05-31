@@ -6,6 +6,11 @@ import sys
 import os
 import webbrowser
 
+from pymol.constants import APPAUTHOR, APPNAME
+from platformdirs import user_cache_dir
+
+
+
 class PyMOLDesktopGUI(object):
     '''Superclass for PyMOL Desktop Applications'''
 
@@ -984,17 +989,24 @@ class PyMOLDesktopGUI(object):
                 return False
             return True
 
-        d = os.path.expanduser('~/.pymol')
-        f = os.path.join(d, 'recent.db')
+        def _get_db_filepath():
+            db_filename = "recent.db"
+            legacy_dir = os.path.expanduser("~/.pymol")
+            if os.path.exists(legacy_dir):
+                return os.path.join(legacy_dir, db_filename)
 
+            xdg_cache_dir = user_cache_dir(APPNAME, APPAUTHOR, ensure_exists=True)
+            return os.path.expanduser(os.path.join(xdg_cache_dir, db_filename))
+
+        db_file = _get_db_filepath()
         try:
-            os.makedirs(d)
+            os.makedirs(os.path.dirname(db_file), exist_ok=True)
         except OSError:
             pass
 
         try:
             import sqlite3
-            db = sqlite3.connect(f)
+            db = sqlite3.connect(db_file)
             db.cursor().execute('CREATE TABLE IF NOT EXISTS '
                     'recent (filename text unique, timestamp integer)')
             self._recent_filenames_db = db
