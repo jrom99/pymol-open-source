@@ -377,7 +377,7 @@ class PluginManager(Pmw.MegaToplevel):
             if not len(d):
                 return
             if not os.path.exists(d):
-                os.makedirs(d)
+                os.makedirs(d, exist_ok=True)
             items = list(slb_path.get())
             items.append(d)
             slb_path_setlist(items)

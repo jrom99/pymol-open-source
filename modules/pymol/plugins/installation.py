@@ -29,10 +29,14 @@ def get_default_user_plugin_path():
     dirname = "startup"
     legacy_dir = os.path.expanduser("~/.pymol")
     if os.path.exists(legacy_dir):
-        return os.path.join(legacy_dir, dirname)
+        d = os.path.join(legacy_dir, dirname)
+    else:
+        xdg_data_dir = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation)
+        d = os.path.expanduser(os.path.join(xdg_data_dir, dirname))
 
-    xdg_data_dir = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation)
-    return os.path.expanduser(os.path.join(xdg_data_dir, dirname))
+    os.makedirs(d, exist_ok=True)
+    return d
+
 
 
 def is_writable(dirname):
@@ -224,7 +228,7 @@ def installPluginFromFile(ofile, parent=None, plugdir=None):
 
         if not os.path.exists(user_plugdir):
             try:
-                os.makedirs(user_plugdir)
+                os.makedirs(user_plugdir, exist_ok=True)
             except OSError:
                 showinfo('Error', 'Could not create user plugin directory', parent=parent)
                 return
