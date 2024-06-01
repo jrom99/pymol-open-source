@@ -14,7 +14,9 @@ QSI = QtGui.QStandardItem  # For brevity
 
 def get_shortcut_key_map():
     shortcut_key_map = {}
-    for key, value in vars(Qt).items():
+    # PyQt6 scoped IntEnums are mutually
+    # exclusive with PyQt5 int subtype enums
+    for key, value in [*vars(Qt).items(), *vars(Qt.Key).items()]:
         if isinstance(value, Qt.Key):
             shortcut_key_map[value] = key.partition('_')[2]
     return shortcut_key_map
@@ -47,7 +49,7 @@ class PyMOLShortcutMenu(QtWidgets.QWidget):
     '''
 
     def __init__(self, parent, saved_shortcuts, cmd):
-        QtWidgets.QWidget.__init__(self, parent, Qt.Window)
+        QtWidgets.QWidget.__init__(self, parent, Qt.WindowType.Window)
         self.resize(700, 700)
         self.cmd = cmd
         self.shortcut_manager = ShortcutManager(saved_shortcuts, cmd)
@@ -285,7 +287,7 @@ class PyMOLShortcutMenu(QtWidgets.QWidget):
         '''
         Event filter for creating new shortcuts. Processes the key event before passing it on.
         '''
-        if (event.type() == QtCore.QEvent.KeyPress and source is self.create_new_form.keyEdit):
+        if (event.type() == QtCore.QEvent.Type.KeyPress and source is self.create_new_form.keyEdit):
             raw_string = self.keyevent_to_string(event)
             processed_string = self.process_keyevent_string(raw_string)
 

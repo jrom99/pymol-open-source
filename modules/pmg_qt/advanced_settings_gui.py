@@ -11,7 +11,7 @@ class PyMOLAdvancedSettings(QtWidgets.QWidget):
     options and adds them to a filterable table.
     """
     def __init__(self, parent, cmd):
-        QtWidgets.QWidget.__init__(self, parent, Qt.Window)
+        QtWidgets.QWidget.__init__(self, parent, Qt.WindowType.Window)
         self.setMinimumSize(400, 500)
         self.cmd = cmd
 

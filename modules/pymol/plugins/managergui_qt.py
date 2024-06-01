@@ -98,15 +98,15 @@ class PluginManager(QtCore.QObject):
 
         for row, key in enumerate(self.t_preferences_keys):
             item = QtWidgets.QTableWidgetItem(key)
-            item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+            item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             w.setItem(row, 0, item)
 
             item = QtWidgets.QTableWidgetItem()
             value = preferences[key]
             if isinstance(value, bool):
-                item.setCheckState(Qt.Checked if value else Qt.Unchecked)
+                item.setCheckState(Qt.CheckState.Checked if value else Qt.CheckState.Unchecked)
             else:
-                item.setFlags(item.flags() & ~Qt.ItemIsUserCheckable)
+                item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsUserCheckable)
                 item.setText(str(value))
             w.setItem(row, 1, item)
 
@@ -225,8 +225,8 @@ class PluginManager(QtCore.QObject):
         def add_plugin_item(info):
             item = window.load_form('pluginitem', QtWidgets.QFrame())
             item._widget = item._dialog
-            item._widget.setFrameStyle(QtWidgets.QFrame.Sunken)
-            item._widget.setFrameShape(QtWidgets.QFrame.Panel)
+            item._widget.setFrameStyle(QtWidgets.QFrame.Shadow.Sunken)
+            item._widget.setFrameShape(QtWidgets.QFrame.Shape.Panel)
 
             item.w_title.setText(info.name)
             item.w_version.setText(info.get_version())
