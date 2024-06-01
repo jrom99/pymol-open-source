@@ -1,4 +1,25 @@
-*.pyc
 *.d
 generated
-build
+
+# generated files
+modules/chempy/champ/*.so
+modules/pymol/*.so
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution/packaging
+*.egg-info
+build/
+dist/
