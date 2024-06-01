@@ -57,7 +57,7 @@ class PluginManager(QtCore.QObject):
         self.form.b_remove_repo.pressed.connect(self.remove_repository)
         self.reload_plugins()
         self.form.l_repo_plugins.setSelectionMode(
-            QtWidgets.QAbstractItemView.ExtendedSelection)
+            QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection)
         self.form.b_install.pressed.connect(self.install_repo_plugins)
         self.form.b_info.pressed.connect(self.info_repo_plugin)
         self.populate_repositories()

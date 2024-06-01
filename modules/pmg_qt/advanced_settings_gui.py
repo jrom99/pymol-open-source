@@ -51,12 +51,12 @@ class PyMOLAdvancedSettings(QtWidgets.QWidget):
 
             value_item = QSI()
             name_item = QSI(name)
-            name_item.setFlags(Qt.ItemIsEnabled)
+            name_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
             if v_type == 1:  # CheckBox type
                 value_item.setCheckable(True)
                 value_item.setEditable(False)  # Can't edit text (but toggles)
                 if v_list[0]:
-                    value_item.setCheckState(Qt.Checked)
+                    value_item.setCheckState(Qt.CheckState.Checked)
             else:  # Text type
                 if v_type in (2, 6):  # int, str
                     value_item.setText(str(v_list[0]))
@@ -93,7 +93,7 @@ class PyMOLAdvancedSettings(QtWidgets.QWidget):
             index = item.data()
 
         if item.isCheckable():
-            checked = item.checkState() == Qt.Checked
+            checked = item.checkState() == Qt.CheckState.Checked
             self.cmd.set(index, checked, log=1, quiet=0)
         else:
             self.cmd.set(index, item.text(), log=1, quiet=0)

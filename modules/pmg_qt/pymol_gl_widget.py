@@ -4,9 +4,8 @@ from pymol2 import SingletonPyMOL as PyMOL
 
 import pymol
 
-from pymol.Qt import QtCore
-from pymol.Qt import QtGui
-from pymol.Qt import QtWidgets
+from pymol.Qt import QtCore, QtGui, QtWidgets
+
 Gesture = QtCore.QEvent.Type.Gesture
 Qt = QtCore.Qt
 
@@ -136,12 +135,12 @@ class PyMOLGLWidget(BaseGLWidget):
         return super(PyMOLGLWidget, self).event(ev)
 
     def gestureEvent(self, ev):
-        gesture = ev.gesture(Qt.PinchGesture)
+        gesture = ev.gesture(Qt.GestureType.PinchGesture)
 
         if gesture is None:
             return False
 
-        if gesture.state() == Qt.GestureStarted:
+        if gesture.state() == Qt.GestureState.GestureStarted:
             self.pinch_start_z = self.cmd.get_view()[11]
 
         changeFlags = gesture.changeFlags()

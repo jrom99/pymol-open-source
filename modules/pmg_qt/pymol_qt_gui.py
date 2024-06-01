@@ -8,8 +8,6 @@ import os
 import re
 import sys
 
-import PyQt6.Qt6.lib
-import PyQt6.Qt6.plugins
 import pymol
 import pymol._gui
 from pymol import colorprinting, save_shortcut
@@ -477,7 +475,7 @@ PyMOL> color ye<TAB>    (will autocomplete "yellow")
         '''
         Full screen
         '''
-        is_fullscreen = self.windowState() == Qt.WindowFullScreen
+        is_fullscreen = self.windowState() == Qt.WindowState.WindowFullScreen
 
         if toggle == -1:
             toggle = not is_fullscreen
@@ -596,10 +594,10 @@ PyMOL> color ye<TAB>    (will autocomplete "yellow")
                         (name, R, G, B))
 
             # if new color, insert and make current row
-            if not form.list_colors.findItems(name, Qt.MatchExactly):
+            if not form.list_colors.findItems(name, Qt.MatchFlag.MatchExactly):
                 form.list_colors.addItem(name)
                 form.list_colors.setCurrentItem(
-                    form.list_colors.findItems(name, Qt.MatchExactly)[0])
+                    form.list_colors.findItems(name, Qt.MatchFlag.MatchExactly)[0])
 
         # hook up events
         form.slider_R.valueChanged.connect(lambda v: update_spinbox(form.input_R, v))
@@ -621,7 +619,7 @@ PyMOL> color ye<TAB>    (will autocomplete "yellow")
         app = plugins.get_pmgapp()
         if not self.builder:
             self.builder = BuilderPanelDocked(self, app)
-            self.addDockWidget(Qt.TopDockWidgetArea, self.builder)
+            self.addDockWidget(Qt.DockWidgetArea.TopDockWidgetArea, self.builder)
 
         self.builder.show()
         self.builder.raise_()
@@ -1028,7 +1026,7 @@ PyMOL> color ye<TAB>    (will autocomplete "yellow")
                 h - f.height() + g.height(),
             )
         elif action == 7: # focus
-            self.setFocus(Qt.OtherFocusReason)
+            self.setFocus(Qt.FocusReason.OtherFocusReason)
         elif action == 8: # defocus
             self.clearFocus()
 
@@ -1205,14 +1203,14 @@ def execapp():
     sys.excepthook = traceback.print_exception
 
     # use QT_OPENGL=desktop (auto-detection may fail on Windows)
-    if hasattr(Qt, 'AA_UseDesktopOpenGL') and pymol.IS_WINDOWS:
-        QtCore.QCoreApplication.setAttribute(Qt.AA_UseDesktopOpenGL)
+    if hasattr(Qt.ApplicationAttribute, 'AA_UseDesktopOpenGL') and pymol.IS_WINDOWS:
+        QtCore.QCoreApplication.setAttribute(Qt.ApplicationAttribute.AA_UseDesktopOpenGL)
 
     # enable 4K scaling on Windows and Linux
-    if hasattr(Qt, 'AA_EnableHighDpiScaling') and not any(
+    if hasattr(Qt.ApplicationAttribute, 'AA_EnableHighDpiScaling') and not any(
             v in os.environ
             for v in ['QT_SCALE_FACTOR', 'QT_SCREEN_SCALE_FACTORS']):
-        QtCore.QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+        QtCore.QCoreApplication.setAttribute(Qt.ApplicationAttribute.AA_EnableHighDpiScaling)
 
     # fix Windows taskbar icon
     if pymol.IS_WINDOWS:

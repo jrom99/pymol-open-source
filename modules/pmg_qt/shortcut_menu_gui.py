@@ -21,12 +21,11 @@ def get_shortcut_key_map():
 
 
 _SHORTCUT_KEY_MAP = get_shortcut_key_map()
-
 _SHORTCUT_MODIFIER_MAP = {
-    Qt.ControlModifier: _SHORTCUT_KEY_MAP[Qt.Key_Control],
-    Qt.AltModifier: _SHORTCUT_KEY_MAP[Qt.Key_Alt],
-    Qt.ShiftModifier: _SHORTCUT_KEY_MAP[Qt.Key_Shift],
-    Qt.MetaModifier: _SHORTCUT_KEY_MAP[Qt.Key_Meta],
+    Qt.KeyboardModifier.ControlModifier: _SHORTCUT_KEY_MAP[Qt.Key.Key_Control],
+    Qt.KeyboardModifier.AltModifier: _SHORTCUT_KEY_MAP[Qt.Key.Key_Alt],
+    Qt.KeyboardModifier.ShiftModifier: _SHORTCUT_KEY_MAP[Qt.Key.Key_Shift],
+    Qt.KeyboardModifier.MetaModifier: _SHORTCUT_KEY_MAP[Qt.Key.Key_Meta],
 }
 
 _REPLACE_KEYS = {
@@ -66,7 +65,7 @@ class PyMOLShortcutMenu(QtWidgets.QWidget):
         self.model = QtGui.QStandardItemModel(self)
         self.proxy_model = QtCoreModels.QSortFilterProxyModel(self)
         self.proxy_model.setSourceModel(self.model)
-        self.proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
+        self.proxy_model.setFilterCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         self.proxy_model.setFilterKeyColumn(-1)
 
         self.setWindowTitle('Keyboard Shortcut Menu')
@@ -166,8 +165,8 @@ class PyMOLShortcutMenu(QtWidgets.QWidget):
             key_item = QSI(key)
             command_item = QSI()
             descript_item = QSI()
-            key_item.setFlags(Qt.ItemIsEnabled)
-            descript_item.setFlags(Qt.ItemIsEditable)
+            key_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            descript_item.setFlags(Qt.ItemFlag.ItemIsEditable)
 
             if shortcut_list[ShortcutIndex.USER_DEF]:
                 if shortcut_list[ShortcutIndex.USER_DEF] != "Deleted":
