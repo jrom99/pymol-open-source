@@ -206,7 +206,7 @@ def connectFontContextMenu(widget):
 
     @type widget: QWidget
     """
-    widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+    widget.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.CustomContextMenu)
 
     @widget.customContextMenuRequested.connect
     def _(pt):
@@ -259,7 +259,7 @@ def getMonospaceFont(size=9):
         family = 'Monospace'
 
     font = QtGui.QFont(family, size)
-    font.setStyleHint(font.Monospace)
+    font.setStyleHint(font.StyleHint.Monospace)
 
     return font
 

@@ -7,7 +7,7 @@ import pymol
 from pymol.Qt import QtCore
 from pymol.Qt import QtGui
 from pymol.Qt import QtWidgets
-Gesture = QtCore.QEvent.Gesture
+Gesture = QtCore.QEvent.Type.Gesture
 Qt = QtCore.Qt
 
 from .keymapping import get_modifiers
@@ -20,7 +20,8 @@ from pymol._cmd import glViewport
 # no stereo support)
 USE_QOPENGLWIDGET = int(
     os.getenv("PYMOL_USE_QOPENGLWIDGET") or
-    (pymol.IS_MACOS and QtCore.QT_VERSION >= 0x50400))
+    (QtCore.QT_VERSION >= 0x50400 and pymol.IS_MACOS or
+     QtCore.QT_VERSION >= 0x60000))
 
 if USE_QOPENGLWIDGET:
     BaseGLWidget = QtWidgets.QOpenGLWidget
@@ -42,9 +43,9 @@ class PyMOLGLWidget(BaseGLWidget):
 
     # mouse button map
     _buttonMap = {
-        Qt.LeftButton: 0,
-        Qt.MidButton: 1,
-        Qt.RightButton: 2,
+        Qt.MouseButton.LeftButton: 0,
+        Qt.MouseButton.MidButton: 1,
+        Qt.MouseButton.RightButton: 2,
     }
 
     def __enter__(self):
@@ -90,7 +91,7 @@ class PyMOLGLWidget(BaseGLWidget):
         if USE_QOPENGLWIDGET:
             super(PyMOLGLWidget, self).__init__(parent=parent)
             self.setFormat(f)
-            self.setUpdateBehavior(QtWidgets.QOpenGLWidget.PartialUpdate)
+            self.setUpdateBehavior(QtWidgets.QOpenGLWidget.UpdateBehavior.PartialUpdate)
         else:
             super(PyMOLGLWidget, self).__init__(f, parent=parent)
 
@@ -107,7 +108,7 @@ class PyMOLGLWidget(BaseGLWidget):
         self.setMouseTracking(True)
 
         # for accepting keyboard input (command line, shortcuts)
-        self.setFocusPolicy(Qt.ClickFocus)
+        self.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
 
         # for idle rendering
         self._timer = QtCore.QTimer()
@@ -118,7 +119,7 @@ class PyMOLGLWidget(BaseGLWidget):
         self.setAcceptDrops(True)
 
         # pinch-zoom
-        self.grabGesture(Qt.PinchGesture)
+        self.grabGesture(Qt.GestureType.PinchGesture)
 
     def sizeHint(self):
         # default 640 + internal_gui, 480 + internal_feedback
@@ -167,9 +168,10 @@ class PyMOLGLWidget(BaseGLWidget):
         return True
 
     def _event_x_y_mod(self, ev):
+        pos = ev.position() if hasattr(ev, "position") else ev.pos()
         return (
-            int(self.fb_scale * ev.x()),
-            int(self.fb_scale * (self.height() - ev.y())),
+            int(self.fb_scale * pos.x()),
+            int(self.fb_scale * (self.height() - pos.y())),
             get_modifiers(ev),
         )
 

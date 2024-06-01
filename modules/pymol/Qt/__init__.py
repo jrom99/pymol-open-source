@@ -8,10 +8,9 @@ PyQt5/PyQt4 differences:
 http://pyqt.sourceforge.net/Docs/PyQt5/pyqt4_differences.html
 """
 
-DEBUG = False
+DEBUG = True
 
 PYQT_NAME = None
-QtWidgets = None
 
 try:
     from pymol._Qt_pre import *
@@ -22,6 +21,15 @@ except ImportError:
 import os
 
 qt_api = os.environ.get('QT_API', '')
+
+if not PYQT_NAME and qt_api in ('', 'pyqt6'):
+    try:
+        from PyQt6 import QtGui, QtCore, QtOpenGL, QtWidgets
+        from PyQt6 import QtOpenGLWidgets
+        PYQT_NAME = 'PyQt6'
+    except ImportError:
+        if DEBUG:
+            print('import PyQt6 failed')
 
 if not PYQT_NAME and qt_api in ('', 'pyqt5'):
     try:
@@ -47,6 +55,7 @@ if not PYQT_NAME and qt_api in ('', 'pyqt4'):
             import sip
         sip.setapi("QString", 2)
         from PyQt4 import QtGui, QtCore, QtOpenGL
+        from PyQt4 import QtGui as QtWidgets
         PYQT_NAME = 'PyQt4'
     except ImportError:
         if DEBUG:
@@ -55,6 +64,7 @@ if not PYQT_NAME and qt_api in ('', 'pyqt4'):
 if not PYQT_NAME and qt_api in ('', 'pyside'):
     try:
         from PySide import QtGui, QtCore, QtOpenGL
+        from PySide import QtGui as QtWidgets
         PYQT_NAME = 'PySide'
     except ImportError:
         if DEBUG:
@@ -65,9 +75,6 @@ if not PYQT_NAME:
 
 # qtpy compatibility
 os.environ['QT_API'] = PYQT_NAME.lower()
-
-if QtWidgets is None:
-    QtWidgets = QtGui
 
 if hasattr(QtCore, 'QAbstractProxyModel'):
     QtCoreModels = QtCore
@@ -80,6 +87,14 @@ if PYQT_NAME == 'PyQt4':
     QFileDialog.getOpenFileNames = QFileDialog.getOpenFileNamesAndFilter
     QFileDialog.getSaveFileName = QFileDialog.getSaveFileNameAndFilter
     del QFileDialog
+
+if PYQT_NAME.endswith('6'):
+    QtWidgets.QOpenGLWidget = QtOpenGLWidgets.QOpenGLWidget
+    QtWidgets.QActionGroup = QtGui.QActionGroup
+    QtWidgets.QAction = QtGui.QAction
+    QtWidgets.QShortcut = QtGui.QShortcut
+    QtCore.QSortFilterProxyModel.setFilterRegExp = QtCore.QSortFilterProxyModel.setFilterRegularExpression
+    QtCore.Qt.MouseButton.MidButton = QtCore.Qt.MouseButton.MiddleButton
 
 if PYQT_NAME[:4] == 'PyQt':
     QtCore.Signal = QtCore.pyqtSignal
