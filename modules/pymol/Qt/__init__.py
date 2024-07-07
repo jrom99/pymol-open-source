@@ -73,6 +73,9 @@ if not PYQT_NAME and qt_api in ('', 'pyside'):
 if not PYQT_NAME:
     raise ImportError(__name__)
 
+if DEBUG:
+    print(f"Imported {PYQT_NAME} as GUI backend")
+
 # qtpy compatibility
 os.environ['QT_API'] = PYQT_NAME.lower()
 
@@ -95,6 +98,8 @@ if PYQT_NAME.endswith('6'):
     QtWidgets.QShortcut = QtGui.QShortcut
     QtCore.QSortFilterProxyModel.setFilterRegExp = QtCore.QSortFilterProxyModel.setFilterRegularExpression
     QtCore.Qt.MouseButton.MidButton = QtCore.Qt.MouseButton.MiddleButton
+    QtCore.QCoreApplication.setApplicationName("PyMOL")
+    QtGui.QGuiApplication.setDesktopFileName("pymol.desktop")
 
 if PYQT_NAME[:4] == 'PyQt':
     QtCore.Signal = QtCore.pyqtSignal
