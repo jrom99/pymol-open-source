@@ -523,11 +523,11 @@ PyMOL> color ye<TAB>    (will autocomplete "yellow")
             widget = dialog
 
         try:
-            m = importlib.import_module('.forms.' + name, 'pmg_qt')
+            m = importlib.import_module(f'.forms.{name}', 'pmg_qt')
         except ImportError as e:
             if pymol.Qt.DEBUG:
-                print('load_form import failed (%s)' % (e,))
-            uifile = os.path.join(os.path.dirname(__file__), 'forms', '%s.ui' % name)
+                print(f'load_form import of {name!r} failed ({e}), retrieving file directly')
+            uifile = os.path.join(os.path.dirname(__file__), 'forms', f'{name}.ui')
             form = pymol.Qt.utils.loadUi(uifile, widget)
         else:
             if hasattr(m, 'Ui_Form'):
