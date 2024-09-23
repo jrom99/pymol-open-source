@@ -1520,12 +1520,9 @@ static int RepSurfaceCGOGenerate(RepSurface* I, RenderInfo* info)
         convertcgo = CGOOptimizeToVBOIndexedWithColorEmbedTransparentInfo(
             I->shaderCGO, 0, 0, 0);
       CHECKOK(ok, convertcgo);
-#ifdef _PYMOL_IOS
-#endif
     } else {
       if (ok)
-        convertcgo = CGOOptimizeToVBONotIndexedWithReturnedData(
-            I->shaderCGO, 0, false, nullptr);
+        convertcgo = CGOOptimizeToVBONotIndexed(I->shaderCGO, 0, false);
       CHECKOK(ok, convertcgo);
     }
     if (ok)

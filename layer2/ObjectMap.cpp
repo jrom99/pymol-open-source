@@ -1728,7 +1728,7 @@ static CGO* ObjectMapCGOGenerate(PyMOLGlobals *G, float* corner)
 
   CGOStop(shaderCGO);
 
-  return CGOOptimizeToVBONotIndexedWithReturnedData(shaderCGO, 0, false);
+  return CGOOptimizeToVBONotIndexed(shaderCGO, 0, false);
 }
 
 void ObjectMap::render(RenderInfo * info)
@@ -5596,6 +5596,7 @@ static int ObjectMapNumPyArrayToMapState(PyMOLGlobals * G, ObjectMapState * ms,
   void * ptr;
 
 #ifdef _PYMOL_NUMPY
+  import_array1(0);
   PyArrayObject * pao = (PyArrayObject *) ary;
   const int itemsize = PyArray_ITEMSIZE(pao);
 #endif

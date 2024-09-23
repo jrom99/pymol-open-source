@@ -692,8 +692,8 @@ PyMOL> color ye<TAB>    (will autocomplete "yellow")
             width = form.input_width_units.value()
             height = form.input_height_units.value()
             factor = get_factor()
-            form.input_width.setValue(width / factor)
-            form.input_height.setValue(height / factor)
+            form.input_width.setValue(int(width / factor))
+            form.input_height.setValue(int(height / factor))
 
         @lock.skipIfCircular
         def update_width(*args):
@@ -929,9 +929,9 @@ PyMOL> color ye<TAB>    (will autocomplete "yellow")
         return self.lineedit.setCursorPosition(i)
 
     def update_progress(self):
-        progress = self.cmd.get_progress()
+        progress = int(self.cmd.get_progress() * 100)
         if progress >= 0:
-            self.progressbar.setValue(progress * 100)
+            self.progressbar.setValue(progress)
             self.progressbar.show()
             self.abortbutton.show()
         else:

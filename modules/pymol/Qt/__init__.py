@@ -28,6 +28,15 @@ except ImportError:
     if DEBUG:
         print('import _Qt_pre failed')
 
+PYQT_NAME = None
+QtWidgets = None
+
+try:
+    from pymol._Qt_pre import *
+except ImportError:
+    if DEBUG:
+        print('import _Qt_pre failed')
+
 import os
 
 qt_api = os.environ.get('QT_API', '')

@@ -48,15 +48,7 @@ Z* -------------------------------------------------------------------
 #include"OpenVRMode.h"
 #endif
 
-
-/* BEGIN PROPRIETARY CODE SEGMENT */
-#ifdef WIN32
-#define NOMINMAX
-#include<windows.h>
-#endif
-
-
-/* END PROPRIETARY CODE SEGMENT */
+#include <thread>
 
 /**
  * Setting level info table
@@ -683,16 +675,7 @@ static bool is_session_blacklisted(int index) {
   case cSetting_use_shaders:
   case cSetting_pick32bit:
   case cSetting_display_scale_factor:
-#ifdef _PYMOL_IOS
-  case cSetting_cgo_sphere_quality:
-  case cSetting_dynamic_measures:
-  case cSetting_label_outline_color:
-  case cSetting_mouse_selection_mode:
-  case cSetting_sphere_mode:
-  case cSetting_sphere_quality:
-  case cSetting_stick_ball:
-  case cSetting_virtual_trackball:
-#elif defined(_PYMOL_ACTIVEX)
+#if defined(_PYMOL_ACTIVEX)
   case cSetting_async_builds:
 #endif
     return true;
@@ -3107,15 +3090,8 @@ void SettingInitGlobal(PyMOLGlobals * G, int alloc, int reset_gui, int use_defau
     set_b(I, cSetting_precomputed_lighting, 1);
 
 #ifndef _PYMOL_ACTIVEX
-    {
-      SYSTEM_INFO SysInfo;
-      GetSystemInfo(&SysInfo);
-      {
-        DWORD count = SysInfo.dwNumberOfProcessors;
-        if(count > 1) {
-          set_i(I, cSetting_max_threads, count);
-        }
-      }
+    if (auto count = std::thread::hardware_concurrency() > 1) {
+      set_i(I, cSetting_max_threads, count);
     }
     /* END PROPRIETARY CODE SEGMENT */
 #endif
@@ -3125,8 +3101,6 @@ void SettingInitGlobal(PyMOLGlobals * G, int alloc, int reset_gui, int use_defau
     set_i(I, cSetting_label_font_id, 0);
 #endif
 
-#ifdef _PYMOL_IOS
-#endif
   }
   G->ShaderMgr->Set_Reload_Bits(RELOAD_ALL_SHADERS);
 }
