@@ -1,5 +1,11 @@
 *.pyc
 *.d
 generated
-build
 .vscode
+
+__pycache__/
+build/
+dist/
+*.egg-info/
+venv/
+*.so
