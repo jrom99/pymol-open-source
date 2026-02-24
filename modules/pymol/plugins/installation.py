@@ -282,6 +282,7 @@ def installPluginFromFile(ofile, parent=None, plugdir=None):
     temppathnames = []
     try:
         name, ext = get_name_and_ext(ofile)
+        check_valid_name(name)
 
         if ext in zip_extensions:
             # import archive
@@ -295,7 +296,6 @@ def installPluginFromFile(ofile, parent=None, plugdir=None):
             ofile = os.path.join(odir, '__init__.py')
             mod_dir = os.path.join(plugdir, name)
             check_reinstall(name, mod_dir)
-            check_valid_name(name)
             shutil.copytree(odir, mod_dir, ignore=shutil.ignore_patterns(".git"))
 
             mod_file = os.path.join(mod_dir, '__init__.py')
@@ -306,7 +306,6 @@ def installPluginFromFile(ofile, parent=None, plugdir=None):
             name = os.path.basename(odir)
             mod_dir = os.path.join(plugdir, name)
             check_reinstall(name, mod_dir)
-            check_valid_name(name)
             shutil.copytree(odir, mod_dir, ignore=shutil.ignore_patterns(".git"))
 
             mod_file = os.path.join(mod_dir, '__init__.py')
@@ -315,7 +314,6 @@ def installPluginFromFile(ofile, parent=None, plugdir=None):
             # import python file
             mod_file = os.path.join(plugdir, name + '.py')
             check_reinstall(name, mod_file)
-            check_valid_name(name)
             shutil.copy(ofile, mod_file)
 
         else:
@@ -329,7 +327,7 @@ def installPluginFromFile(ofile, parent=None, plugdir=None):
         if pref_get('verbose', False):
             import traceback
             traceback.print_exc()
-        msg = 'Unable to install plugin "{}".\n{}'.format(name, e)
+        msg = f'Unable to install plugin {name!r}.\n{e}'
         showinfo('Error', msg, parent=parent)
         return
 
@@ -340,12 +338,13 @@ def installPluginFromFile(ofile, parent=None, plugdir=None):
             else:
                 os.remove(pathname)
 
-    info = PluginInfo(name, mod_file, f"pymol.user_plugins.{name}")
+    mod_name = f"pymol.user_plugins.{name}"
+    info = PluginInfo(name, mod_file, mod_name)
 
     if info.load(force=1):
-        showinfo('Success', 'Plugin "%s" has been installed.' % name, parent=parent)
+        showinfo('Success', f'Plugin {name!r} has been installed.', parent=parent)
     else:
-        showinfo('Error', 'Plugin "%s" has been installed but initialization failed.' % name, parent=parent)
+        showinfo('Error', f'Plugin {name!r} has been installed but initialization failed.', parent=parent)
 
     if info.get_citation_required():
         if askyesno('Citation Required', 'This plugin requires citation. Show information now?'

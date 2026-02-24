@@ -11,6 +11,7 @@ import sys
 import pymol
 from pymol import cmd
 from pymol import colorprinting
+from pymol import user_plugins
 from pymol.shortcut import Shortcut
 from .legacysupport import *
 from platformdirs import user_data_dir
@@ -272,6 +273,7 @@ class PluginInfo(object):
                 importlib.reload(self.module)
             else:
                 spec = importlib.util.spec_from_file_location(self.mod_name, self.filename)
+                assert self.mod_name == spec.name, (self.mod_name, spec.name)
                 module = importlib.util.module_from_spec(spec)
                 sys.modules[spec.name] = module
                 spec.loader.exec_module(module)
