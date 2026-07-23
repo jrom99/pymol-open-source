@@ -179,19 +179,13 @@ class Shortcut:
         This method checks if a keyword is valid, and if not,
         raises a descriptive error with suggestions for possible matches.
         """
-
         if keyword == "":
             return
 
         result = self.interpret(keyword)
 
         if result is None and descrip is not None:
-            msg = f"Error: unknown {descrip}: '{keyword}'."
-            lst = self.interpret("")
-            if isinstance(lst, list) and len(lst) < 100:
-                lst.sort()
-                lst = parsing.list_to_str_list(lst)
-                msg += " Choices:\n" + "\n".join(lst)
+            msg = f"Error: unknown {descrip}: {keyword!r}."
             raise parsing.QuietException(msg)
 
         if isinstance(result, list) and descrip is not None:
