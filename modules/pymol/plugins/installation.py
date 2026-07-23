@@ -7,6 +7,7 @@ License: BSD-2-Clause
 '''
 
 import os
+from platformdirs import user_data_dir
 
 # supported file types for installation. Do not support pyc and pyo binaries,
 # we want text files that can be parsed for metadata.
@@ -24,9 +25,7 @@ def get_default_user_plugin_path():
     User plugin directory defaults to ~/.pymol/startup on Linux and to
     %APPDATA%\pymol\startup on windows.
     '''
-    if 'APPDATA' in os.environ:
-        return os.path.join(os.environ['APPDATA'], 'pymol', 'startup')
-    return os.path.expanduser('~/.pymol/startup')
+    return os.path.join(user_data_dir("pymol", ensure_exists=True), "startup")
 
 def is_writable(dirname):
     '''

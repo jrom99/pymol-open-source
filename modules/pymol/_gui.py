@@ -5,6 +5,7 @@ PyMOL GUI Data (toolkit independant)
 import sys
 import os
 import webbrowser
+from platformdirs import user_cache_dir
 
 class PyMOLDesktopGUI(object):
     '''Superclass for PyMOL Desktop Applications'''
@@ -983,13 +984,7 @@ class PyMOLDesktopGUI(object):
                 return False
             return True
 
-        d = os.path.expanduser('~/.pymol')
-        f = os.path.join(d, 'recent.db')
-
-        try:
-            os.makedirs(d)
-        except OSError:
-            pass
+        f = os.path.join(user_cache_dir("pymol", ensure_exists=True), "recent.db")
 
         try:
             import sqlite3

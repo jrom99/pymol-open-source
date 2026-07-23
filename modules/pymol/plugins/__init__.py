@@ -13,11 +13,12 @@ from pymol import cmd
 from pymol import colorprinting
 from pymol.shortcut import Shortcut
 from .legacysupport import *
+from platformdirs import user_data_dir
 import importlib
 
 # variables
 
-PYMOLPLUGINSRC = os.path.expanduser('~/.pymolpluginsrc.py')
+PYMOLPLUGINSRC = os.path.join(user_data_dir("pymol", ensure_exists=True), 'pymolpluginsrc.py')
 
 preferences = {
     'verbose': False,
