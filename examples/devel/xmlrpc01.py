@@ -23,12 +23,10 @@ molData="""foo
   1  5  1  0  0  0
 M  END
 """
-import sys,tempfile,os
-
-try:
-    import xmlrpclib
-except ImportError:
-    import xmlrpc.client as xmlrpclib
+import os
+import sys
+import tempfile
+import xmlrpc.client as xmlrpclib
 
 fName = tempfile.mktemp('.mol')
 open(fName,'w+').write(molData)

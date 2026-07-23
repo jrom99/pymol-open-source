@@ -4,14 +4,11 @@
 #
 # pymol will then run the script on startup
 
-try:
-    from Tkinter import *
-    from tkFileDialog import *
-except ImportError:
-    from tkinter import *
-    from tkinter.filedialog import *
+from tkinter import *
+from tkinter.filedialog import *
 
 from pymol import cmd
+
 
 class myTkWindow:
 
@@ -27,8 +24,6 @@ class myTkWindow:
         file_list = askopenfilename(multiple=1)
         for file in file_list:
             self.app.pymol.cmd.load(file)
-        
+
 def __init__(app):
     myTkWindow(app)
-    
-        

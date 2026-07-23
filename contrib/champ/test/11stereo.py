@@ -148,32 +148,32 @@ X = [ # explicit patterns (achiral)
 
 # print 
 
-PIS = map(lambda x:ch.insert_pattern_string(x),IS)
-PXS = map(lambda x:ch.insert_pattern_string(x),XS)
+PIS = [ch.insert_pattern_string(x) for x in IS]
+PXS = [ch.insert_pattern_string(x) for x in XS]
 
 for a in range(0,len(PIS)):
-   print IS[a],ch.pattern_get_string(PIS[a])
+   print(IS[a],ch.pattern_get_string(PIS[a]))
 
 for a in range(0,len(PXS)):
-   print XS[a],ch.pattern_get_string(PXS[a])
+   print(XS[a],ch.pattern_get_string(PXS[a]))
 
-PIR = map(lambda x:ch.insert_pattern_string(x),IR)
-PXR = map(lambda x:ch.insert_pattern_string(x),XR)
+PIR = [ch.insert_pattern_string(x) for x in IR]
+PXR = [ch.insert_pattern_string(x) for x in XR]
 
 for a in range(0,len(PIR)):
-   print IR[a],ch.pattern_get_string(PIR[a])
+   print(IR[a],ch.pattern_get_string(PIR[a]))
 
 for a in range(0,len(PXR)):
-   print XR[a],ch.pattern_get_string(PXR[a])
+   print(XR[a],ch.pattern_get_string(PXR[a]))
 
 
-PI = map(lambda x:ch.insert_pattern_string(x),I)
-PX = map(lambda x:ch.insert_pattern_string(x),X)
+PI = [ch.insert_pattern_string(x) for x in I]
+PX = [ch.insert_pattern_string(x) for x in X]
 
 for a in range(0,len(PI)):
-   print I[a],ch.pattern_get_string(PI[a])
+   print(I[a],ch.pattern_get_string(PI[a]))
 
 for a in range(0,len(PX)):
-   print X[a],ch.pattern_get_string(PX[a])
+   print(X[a],ch.pattern_get_string(PX[a]))
 
 

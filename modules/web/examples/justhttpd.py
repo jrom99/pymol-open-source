@@ -8,13 +8,13 @@
 # vanilla web server designed for testing multi-origin applications
 # by serving up content on 127.0.0.1:xxxx instead of localhost:yyyy
 
-from __future__ import print_function
 
-import BaseHTTPServer, cgi, urlparse, socket
+
+import http.server, cgi, urllib.parse, socket
 
 import types, os, sys, traceback, threading
 
-class _HTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+class _HTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
         self.process_request()
@@ -34,12 +34,12 @@ class _HTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                                 "Only localhost requests are allowed (not: %s)"
                                 % host)
             else:
-                self.callback = None 
+                self.callback = None
                 self.parse_args()
                 self.send_doc()
         except socket.error:
             pass
-        
+
     def parse_args(self):
         if (self.command == "POST"):
             self.fs = cgi.FieldStorage(fp=self.rfile, headers=self.headers,
@@ -47,14 +47,14 @@ class _HTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                                        keep_blank_values = 1)
             self.urlpath = self.path
         elif (self.command == "GET"):
-            scheme,netloc,path,params,qs,fragment = urlparse.urlparse(self.path)
+            scheme,netloc,path,params,qs,fragment = urllib.parse.urlparse(self.path)
             self.fs = cgi.FieldStorage(environ = {'REQUEST_METHOD':'GET',
                                                   'QUERY_STRING':qs},
                                        keep_blank_values = 1)
             self.urlpath = path
         else:
             self.fs = None
-        
+
     def send_doc(self):
         """
         send a document (file) in the current directory or any sub-directory
@@ -104,7 +104,7 @@ class _HTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             return 'application/x-pymol'
         else:
             return 'text/plain'
-            
+
     def send_error(self,errcode,errmsg):
         try:
             self.send_response(errcode)
@@ -115,7 +115,7 @@ class _HTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             # right now we're swallowing any/all exceptions
             # (e.g. Broken Pipe)
             pass
-        
+
     def send_ok(self, mime='text/html'):
         self.send_response(200)
         self.send_header('Content-type', mime)
@@ -130,11 +130,11 @@ class _HTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         """
         self.wfile.write("%s\n" % self.command)
         if (self.fs):
-            for k in self.fs.keys():
+            for k in list(self.fs.keys()):
                 self.wfile.write("%s = " % k)
                 # key can have multiple values, as with checkboxes,
                 # but also arbitrarily
-                if (isinstance(self.fs[k], types.ListType)):
+                if (isinstance(self.fs[k], list)):
                     self.wfile.write("%s\n" % self.fs.getlist(k))
                 else:
                     # key can be uploaded file
@@ -163,13 +163,13 @@ class PlainHttpd:
         self.stop_event.set()
         self.root = root
 
-        self.server = BaseHTTPServer.HTTPServer(('', self.port),
+        self.server = http.server.HTTPServer(('', self.port),
                                                 _HTTPRequestHandler)
         if self.port == 0:
             self.port = self.server.socket.getsockname()[1]
 
         self.server.root = self.root
-        
+
     def _server_thread(self):
         while not self.stop_event.isSet():
             self.server.handle_request()
@@ -185,24 +185,24 @@ class PlainHttpd:
         if not self.stop_event.isSet():
             self.stop_event.set()
             try: # create a request in order to release the handler
-                import urllib
-                urllib.urlopen("http://localhost:%d" % self.port)
+                import urllib.request, urllib.parse, urllib.error
+                urllib.request.urlopen("http://localhost:%d" % self.port)
             except:
                 pass
             self.server.socket.close()
-        
+
 def main():
 
     import os
-    
+
     # initialize the server, with current local working directory as root
-    
+
     server = PlainHttpd(0, ".")
 
     # get a dynamically assigned port number
 
     port = server.port
-    
+
     # start handling requests
 
     server.start()
@@ -212,7 +212,7 @@ def main():
     import webbrowser
     webbrowser.open("http://127.0.0.1:%d"%port)
 
-if __name__ in [ '__main__', 'pymol' ]: 
+if __name__ in [ '__main__', 'pymol' ]:
 
     # intended to be launched with normal Python or
     # pymol -qc justhttpd.py
@@ -221,4 +221,3 @@ if __name__ in [ '__main__', 'pymol' ]:
     import time
     while 1:
         time.sleep(1)
-        

@@ -1,19 +1,17 @@
 # Another simple example of how PyMOL can be controlled using a web browser
 # using Python's built-in web server capabilities
 
-try:
-    import BaseHTTPServer
-except ImportError:
-    import http.server as BaseHTTPServer
-
-import time
 import cgi
+import http.server as BaseHTTPServer
+import os
+import re
+import sys
 import threading
+import time
 import traceback
-import os, sys, re
 
-from pymol import cmd
 from chempy.sdf import SDF
+from pymol import cmd
 
 # example 3D sd file
 
@@ -41,14 +39,14 @@ def write_table(out, table):
     out.write('<script type="text/javascript" src="pymol.js"></script>\n')
     out.write('</header>')
     out.write('<body>\n')
-    out.write('<form action="./quit.pymol"><button type="submit">Quit</button></form>\n')     
+    out.write('<form action="./quit.pymol"><button type="submit">Quit</button></form>\n')
     out.write('<table>\n')
     header = table['header']
     for heading in header:
         out.write('<th>')
         out.write(heading)
         out.write('</th>')
-    
+
     body = table['body']
     for row in body:
         out.write('<tr>')
@@ -111,7 +109,7 @@ a:visited {text-decoration: none; color: blue; }
 a:active {text-decoration: none; color: blue; }
 
         ''')
-        
+
     def do_js(self):
         self.send_response(200)
         self.send_header('Content-type','text/javascript')
@@ -123,7 +121,7 @@ function load(molid)
 {
 // unnecessary...but keeping it around for later...
 // this doesnt actually work anyway!
-                         
+
     document.forms['hidden'].method='get';
     document.forms['hidden'].action='http://localhost:8080/load.pymol?test=1&molid=' + molid;
     document.forms['hidden'].submit();
@@ -153,7 +151,7 @@ function load(molid)
             self.send_header('Cache-control', 'no-cache')
             self.send_header('Pragma', 'no-cache')
             self.end_headers()
-            mo = re.search("molid\=([A-Z0-9]+)",self.path)
+            mo = re.search(r"molid\=([A-Z0-9]+)",self.path)
             if mo:
                 mol_id = mo.groups(1)[0]
                 session = ServerState[default_token]
@@ -200,7 +198,7 @@ function load(molid)
                 self.end_headers()
                 self.wfile.write(f.read())
                 f.close()
-        except IOError:
+        except OSError:
             self.send_error(404,'File Not Found: %s' % self.path)
 
     def do_POST(self): # not currently used
@@ -210,32 +208,32 @@ function load(molid)
             if ctype == 'multipart/form-data':
                 query=cgi.parse_multipart(self.rfile, pdict)
             self.send_response(301)
-            
+
             self.end_headers()
             upfilecontent = query.get('upfile')
             print("filecontent", upfilecontent[0])
             self.wfile.write('<HTML>POST OK.<BR><BR>');
             self.wfile.write(upfilecontent[0]);
-            
+
         except :
             pass
 
 def table_from_data(data):
 
     # pull MOLID to the far left
-    
+
     col_id_list = ['MOLID'] + [x for x in data['col_id_list'] if x!='MOLID']
     content = data['content']
 
     # create the header fields
-    
+
     header = []
-    
+
     for col_id in  col_id_list:
         header.append(col_id)
 
     # create the body
-    
+
     body = []
     for row_id in data['row_id_list']:
         row = []
@@ -247,7 +245,7 @@ def table_from_data(data):
             else:
                 row.append( content.get( (row_id,col_id),'' ))
         body.append(row)
-        
+
     return {
         'header' : header,
         'body' : body,
@@ -259,7 +257,7 @@ def data_from_sdf(sdf_file_path):
 
     row_id_list = []
     row_id_dict = {}
-    
+
     col_id_list = []
     col_id_dict = {}
 
@@ -278,22 +276,22 @@ def data_from_sdf(sdf_file_path):
 
         # store the MOL record
         mol_dict[mol_id] = ''.join(mol)
-        
+
         # add row (assuming mol_id is unique)
         row_id_list.append(mol_id)
         row_id_dict[mol_id] = None
-        
+
         # add column (if new)
         for key in rec.kees:
             if key != 'MOL':
                 if key not in col_id_dict:
                     col_id_list.append(key)
                     col_id_dict[key] = None
-        
+
     # second pass, read the actual data into the table structure
 
     content = {}
-    
+
     sdf = SDF(sdf_file_path)
     while 1:
         rec = sdf.read()
@@ -331,18 +329,18 @@ def main():
 
 if __name__ == '__main__':
     print("this script must be run from within PyMOL")
-    
+
 if __name__ == 'pymol':
 
-    
+
     session = SafeDict()
     session['cmd'] = cmd #  could replaced by instance instead of module
     session['data'] = data_from_sdf(input_sdf)
     session['table'] = table_from_data(session['data'])
-    
+
     ServerState[default_token] = session
-    
-    
+
+
     t = threading.Thread(target=main)
     t.setDaemon(1)
     t.start()
@@ -351,7 +349,7 @@ if __name__ == 'pymol':
     t.setDaemon(1)
     t.start()
 
-    
+
 """
 
 

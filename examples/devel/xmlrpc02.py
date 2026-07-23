@@ -7,12 +7,10 @@
   Requires:
             - a python xmlrpclib distribution containing the SimpleXMLRPCServer
               module (1.0 or greater should be fine)
-  RD Version: $Rev$            
+  RD Version: $Rev$
 """
-try:
-    import xmlrpclib
-except ImportError:
-    import xmlrpc.client as xmlrpclib
+import xmlrpc.client as xmlrpclib
+
 
 def startServer(host='localhost',startPort=9123,nToTry=5):
   done = 0
@@ -110,4 +108,3 @@ if __name__=='__main__':
   serv.sphere((0,1.87,.26),.5,(1,0,1),'demo')
   serv.cylinder((.28,-1.2,1.48),(0,1.87,.26),.1,(.5,0,.5),'demo')
   serv.zoom()
-  

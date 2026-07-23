@@ -1,11 +1,7 @@
-try:
-    import BaseHTTPServer
-except ImportError:
-    import http.server as BaseHTTPServer
-
-import time
 import cgi
+import http.server as BaseHTTPServer
 import threading
+import time
 import traceback
 
 from pymol import cmd
@@ -27,9 +23,9 @@ def get_status(out, self_cmd=cmd):
     out.write('<table><tr>\n')
     out.write('<td><form action="./status.pymol"><button type="submit">Refresh</button></form></td>\n')
     out.write('<td><form target="_new" action="./ray.pymol?t=%f"><button type="submit">Ray</button></form></td>\n'%
-              time.time())    
+              time.time())
     out.write('<td><form target="_new" action="./monitor.pymol?t=%f"><button type="submit">Monitor</button></form></td>\n'%
-              time.time())    
+              time.time())
     out.write('<td><form action="./quit.pymol"><button type="submit">Quit</button></form></td>\n')
     out.write('</tr></table>')
     out.write('<a href="./status.pymol?load">load $TUT/1hpv.pdb</a>\n')
@@ -65,20 +61,20 @@ def write_image(out, ray=0, self_cmd=cmd):
     if self_cmd.png(chr(1)+str(out.fileno()),prior=-1) != 1:
         # no prior image available, so wait for update / finish
         self_cmd.sync()
-        
+
 class PymolHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
 
     def log_message(self, format, *args):
         pass
         # nuke logging feature for the time being
-    
+
     def do_js(self):
         self.send_response(200)
         self.send_header('Content-type','text/javascript')
         self.end_headers()
         self.wfile.write('''
-            
+
 
 function updateImage()
 {
@@ -96,7 +92,7 @@ function monitorOnLoad(event)
 }
 
             ''')
-            
+
     def do_pymol(self):
         if "ray.pymol" in self.path: # send image
             self.send_response(200)
@@ -130,7 +126,7 @@ function monitorOnLoad(event)
             else: # start page
                 get_start(self.wfile)
             self.wfile.flush()
-        
+
     def do_GET(self):
         try:
             doc = self.path.split('?')[0]
@@ -158,13 +154,13 @@ function monitorOnLoad(event)
             if ctype == 'multipart/form-data':
                 query=cgi.parse_multipart(self.rfile, pdict)
             self.send_response(301)
-            
+
             self.end_headers()
             upfilecontent = query.get('upfile')
             print("filecontent", upfilecontent[0])
             self.wfile.write('<HTML>POST OK.<BR><BR>');
             self.wfile.write(upfilecontent[0]);
-            
+
         except :
             pass
 
@@ -200,7 +196,7 @@ if __name__ == 'pymol':
     t.setDaemon(1)
     t.start()
 
-    
+
 """
 
 okay, what we need now is a simple safe way to pass comands and

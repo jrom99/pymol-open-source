@@ -8,7 +8,7 @@
 #     "pymol -r <script.py>" or
 #     "pymol -qcr <script.py>" instead of
 #     "python <script.py>"
-# 
+#
 # However, If must invoke PyMOL from an external interpreter, then
 # you willl need to:
 #
@@ -26,12 +26,7 @@
 pymol_argv = [ "pymol", "-q" ]
 #
 # === Launch the PyMOL thread(s)
-try:
-    import __builtin__
-except ImportError:
-    import builtins as __builtin__
-import os,threading,__main__
-threading.Thread(target=__builtin__.execfile,
+threading.Thread(target=lambda p: exec(open(p).read()),
      args=(os.environ['PYMOL_PATH']+"/modules/launch_pymol.py",
            __main__.__dict__,__main__.__dict__)).start()
 #
@@ -49,5 +44,3 @@ from pymol import cmd
 
 cmd.load("$PYMOL_PATH/test/dat/pept.pdb")
 print(" The surface area is: %8.3f"%cmd.get_area())
-
-

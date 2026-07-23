@@ -19,15 +19,15 @@ while 1:
    l = string.strip(l)
    if len(l):
       if 1000*(c/1000)==c:
-         print c
+         print(c)
       c = c + 1
 #      print l
       idx = ch.insert_pattern_string(l)
  #      ch.pattern_dump(idx)
       o = ch.get_pattern_string(idx)
       if len(o) != len(l): # same length?
-         print "orig:  ",l
-         print "champ: ",o
+         print("orig:  ",l)
+         print("champ: ",o)
          ch.pattern_dump(idx)
          break
       else:
@@ -39,8 +39,8 @@ while 1:
          fail = 0
          if o!=l:
             if o!="S=1(=NC(=O)C(=C(S[C])N=1)C#N)([C])[C]":
-               print "orig:  ",l
-               print "champ: ",o
+               print("orig:  ",l)
+               print("champ: ",o)
                ch.pattern_dump(idx)
                fail = 1
                break

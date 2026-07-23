@@ -19,25 +19,15 @@
 # on host1: pymol syncmol.py -- recv 8000 send host2:8000
 # on host2: pymol syncmol.py -- recv 8000 send host1:8000
 
-import threading
-import socket
-import socket # For gethostbyaddr()
+import pickle as cPickle
+import queue as Queue
+import socket  # For gethostbyaddr()
+import socketserver as SocketServer
 import sys
-import traceback
-import copy
-import os
+import threading
 import time
 
-try:
-    import cPickle
-    import SocketServer
-    import Queue
-except ImportError:
-    import pickle as cPickle
-    import socketserver as SocketServer
-    import queue as Queue
 
-    
 class PyMOLWriter: # this class transmits
 
     def __init__(self, pymol, host='localhost', port=8000):
@@ -52,7 +42,7 @@ class PyMOLWriter: # this class transmits
 
         print(" syncmol: writing to %s:%d"%(host,port))
         pymol.cmd.log_open(self.fifo)
-        
+
         last_view = None
         last_frame = 0
         while 1:
@@ -86,8 +76,8 @@ class PyMOLWriter: # this class transmits
                     last_frame = frame
             else:
                 last_frame = None
-            
-                
+
+
     def _remote_call(self,meth,args=(),kwds={}):
         result = None
         while self.sock == None:
@@ -114,16 +104,16 @@ def remote_set_view(view,_self=cmd):
         _self.set_view(view)
     finally:
         _self.unlock(-1)
-    
+
 class PyMOLReader: # this class receives
 
     def __init__(self,pymol,port):
 
         sys.setcheckinterval(0)
-        
+
         server_address = ('', port)
 
-        ddbs = _PyMOLReader(server_address, _PyMOLRequestHandler)  
+        ddbs = _PyMOLReader(server_address, _PyMOLRequestHandler)
 
         # bind pymol instance to the reader
 
@@ -135,7 +125,7 @@ class PyMOLReader: # this class receives
         ddbs.keep_alive = 1
         while ddbs.keep_alive:
             ddbs.handle_request()
-        
+
 class _PyMOLReader(SocketServer.ThreadingTCPServer):
 
      def server_bind(self):
@@ -169,7 +159,7 @@ class _PyMOLRequestHandler(SocketServer.StreamRequestHandler):
 
              if method == 'shutdown':
                  self.server.keep_alive = 0
-                 
+
              # get arguments from client
              args = cPickle.load(self.rfile)
              kw = cPickle.load(self.rfile)
@@ -180,9 +170,10 @@ class _PyMOLRequestHandler(SocketServer.StreamRequestHandler):
              # call method and return result
              cPickle.dump(meth_obj(*args, **kw),self.wfile,1) # binary by default
              self.wfile.flush()
-             
+
 if __name__=='pymol':
     import os
+
     import pymol
     sys.argv.reverse()
     sys.argv.pop()
@@ -206,6 +197,3 @@ if __name__=='pymol':
                                                     args=(pymol,host,port))
             _stdin_reader_thread.setDaemon(1)
             _stdin_reader_thread.start()
-
-            
-    
