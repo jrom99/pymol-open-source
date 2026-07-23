@@ -2,7 +2,8 @@
 Experimental MMTF (Macromolecular Transmission Format) support
 '''
 
-as_str = lambda s: s if isinstance(s, str) else s.decode("utf-8")
+def as_str(s):
+    return s if isinstance(s, str) else s.decode("utf-8")
 
 #####################################################################
 

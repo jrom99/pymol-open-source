@@ -299,8 +299,8 @@ class MTZHeader(baseHeader):
 
             f.seek(header_start)
 
-            curLine = struct.unpack("80s", f.read(80))[0]
-            curLine = str(curLine.decode())
+            curLine_ = struct.unpack("80s", f.read(80))[0]
+            curLine = str(curLine_.decode())
 
             while not (curLine.startswith("END")):
                 # yank field identifier
@@ -399,8 +399,8 @@ class MTZHeader(baseHeader):
                 except pymol.cmd.QuietException:
                     pass
 
-                curLine = struct.unpack("80s", f.read(80))[0]
-                curLine = str(curLine.decode())
+                curLine_ = struct.unpack("80s", f.read(80))[0]
+                curLine = str(curLine_.decode())
 
 
 if __name__=="__main__":

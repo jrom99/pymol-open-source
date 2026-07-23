@@ -1,7 +1,5 @@
-from __future__ import print_function
-
-import string
 import os
+import string
 import sys
 
 # ChemPy Simple Forcefield (CSFF) Generator Script
@@ -10,7 +8,7 @@ import sys
 # ===================================================
 # This force field is designed to be used to answer
 # general questions about shape and size of small
-# conformationally constrained fragments and to 
+# conformationally constrained fragments and to
 # provide a means of shoe-horning random organic compounds
 # into the Amber force-field without much concern for
 # correctness.  THESE PARAMETERS WILL *NOT* PRODUCE
@@ -29,7 +27,7 @@ import sys
 # DJ                aromatic junction carbon
 # J1                monovalent nitrogen (also isocyanate hack)
 # J3                planer trivalent nitrogen
-# J4                tetrahedral (tri or tetravalent) nitrogen 
+# J4                tetrahedral (tri or tetravalent) nitrogen
 # JA                planer aromatic nitrogen (divalent)
 # JN                sp2 negatively anionic nitrogen (divalent)
 # Q1                carbonyl oxygen
@@ -42,7 +40,7 @@ import sys
 # R4                iodine
 # T1                thiocarbonyl
 # T2                bivalent sulfer
-# TA                delocalized sulfer in aromatic ring 
+# TA                delocalized sulfer in aromatic ring
 # T4                tetrahedral (tetravalent) sulfer
 
 def load(self,fname):
@@ -84,7 +82,7 @@ def load(self,fname):
       if a5 not in self.angle:
          self.angle[a5] = []
       self.angle[a5].append([l[8:]])
-   # read torsion 
+   # read torsion
    self.torsion = {}
    while 1:
       l = string.strip(f.readline())
@@ -92,7 +90,7 @@ def load(self,fname):
       a5 = l[0:11]
       if a5 not in self.torsion:
          self.torsion[a5] = []
-      self.torsion[a5].append([l[11:]])         
+      self.torsion[a5].append([l[11:]])
 
    # read impropers
    self.improper = {}
@@ -107,7 +105,7 @@ def load(self,fname):
    while 1:
       l = string.strip(f.readline())
       if not len(l): break
-   # read vdw equivalents 
+   # read vdw equivalents
    self.vdw_eq = {}
    while 1:
       l = string.strip(f.readline())
@@ -139,16 +137,16 @@ def load(self,fname):
          self.extra[string.strip(l[6:12])]  = [
             int(l[12:18]),
             int(l[18:24])]
-   
+
 
 class BlankObject:
    pass
 
-os.system("sed 's/CT/D4/g;s/C[DM]/D3/g;s/C[\*AKQRVW]/DA/g;"+
+os.system(r"sed 's/CT/D4/g;s/C[DM]/D3/g;s/C[\*AKQRVW]/DA/g;"+
           "s/-C /-DJ/g;s/C -/DJ-/g;s/C[BCN]/DJ/g;s/C[ZY]/D2/g;"+
           "s/C[FX]/DA/g' parm_simple.inp > tmp1.dat")
 
-os.system("sed 's/N[3T]/J4/g;s/-N /-J3/g;s/N -/J3-/g;s/N\*/J3/g;"+
+os.system(r"sed 's/N[3T]/J4/g;s/-N /-J3/g;s/N -/J3-/g;s/N\*/J3/g;"+
           "s/N[A2]/J3/g;s/N[BCX]/JA/g;s/NY/J1/g' tmp1.dat > tmp2.dat")
 
 os.system("sed 's/H[OWSAC123P45Z]/A /g;s/-H /-A /g;s/H -/A -/g' "+
@@ -184,7 +182,7 @@ for a in kees:
 l = [
 'QA 16.00         0.434               delocalized, cationic oxygen',
 'T1 32.06         2.900               Thiocarbonyl',
-]   
+]
 for a in l:
    print(a)
 print()
@@ -313,7 +311,7 @@ for a in kees:
       print("%-1s%8.1f%12.2f    combination of %d"%(a,f1,f2,c))
 # missing angle terms
 l = [
-'A -QN-J3    50.0      109.50    INCORRECT HYDROGEN', 
+'A -QN-J3    50.0      109.50    INCORRECT HYDROGEN',
 'A -JN-J3    50.0      109.50    INCORRECT HYDROGEN',
 'A -D3-D2    50.0      119.10    WLD from A -D3-J3',
 'A -D3-J1    50.0      119.10    WLD from A -D3-J3',
@@ -715,7 +713,7 @@ l = [
 'DJ-Q2-JA    70.0      117.80    WLD from DA-JA-DA',
 'DJ-Q2-J3    70.0      117.80    WLD from DA-JA-DA',
 'DJ-Q2-T4    57.5      118.22    WLD from D4-Q2-DJ',
-'DJ-Q2-Q2    57.5      118.22    WLD from D4-Q2-DJ', 
+'DJ-Q2-Q2    57.5      118.22    WLD from D4-Q2-DJ',
 
 'DJ-R4-DJ    50.0      120.00    WLD gross estimate',
 
@@ -792,11 +790,11 @@ l = [
 
 'J3-Q2-T4    57.5      118.22    WLD from D4-Q2-DJ',
 'J3-Q2-JA    57.5      118.22    WLD from D4-Q2-DJ',
-'J3-Q2-Q2    57.5      118.22    WLD from D4-Q2-DJ', 
+'J3-Q2-Q2    57.5      118.22    WLD from D4-Q2-DJ',
 
 'J3-T4-D4    70.0      109.50    WLD gross estimate',
 'J3-T4-DA    70.0      109.50    WLD gross estimate',
-'J3-T4-Q1   100.0      107.10    WLD from J4-T4-Q1', 
+'J3-T4-Q1   100.0      107.10    WLD from J4-T4-Q1',
 
 'J4-D4-Q2    50.0      109.50    WLD from D4-D4-Q2',
 'J4-DJ-JA    70.0      120.00    WLD gross estimate',
@@ -804,7 +802,7 @@ l = [
 'J4-DJ-TA    63.0      116.25    WLD from DA-DJ-DJ',
 'J4-D4-T2    50.0      111.65    WLD from D4-D4-T2',
 
-'J4-T4-Q2    60.0      107.10    WLD gross estimate', 
+'J4-T4-Q2    60.0      107.10    WLD gross estimate',
 'J4-T4-JA    60.0      107.10    WLD gross estimate',
 
 'JA-D3-JA    70.0      113.13    WLD from J3-DJ-J3',
@@ -935,7 +933,7 @@ l = [
 'Q2-DJ-TA    75.0      120.00    WLD from DA-DJ-Q1',
 
 'Q2-J3-QN    80.0      126.00    WLD from QN-DJ-QN',
-'Q2-J3-Q2    80.0      126.00    WLD from QN-DJ-QN', 
+'Q2-J3-Q2    80.0      126.00    WLD from QN-DJ-QN',
 
 'Q2-JA-QN    80.0      126.00    WLD from QN-DJ-QN',
 'Q2-JA-T4    80.0      126.00    WLD from QN-DJ-QN',
@@ -951,7 +949,7 @@ l = [
 'T1-D3-T2    70.0      121.00    WLD gross estimate',
 'T1-DJ-TA    70.0      121.00    WLD gross estimate',
 
-'T1-DJ-T1    70.0      121.00    WLD gross estimate', 
+'T1-DJ-T1    70.0      121.00    WLD gross estimate',
 'T1-DJ-T2    70.0      121.00    WLD gross estimate',
 
 
@@ -1061,7 +1059,7 @@ for a in kees:
       f1 = float(b[0][0:6])
       f2 = float(b[0][6:14])
       f3 = float(b[0][14:27])
-      f4 = float(b[0][27:42])         
+      f4 = float(b[0][27:42])
       c = 1
       flag = 0
       for b in tmp.torsion[a][1:]:
@@ -1087,7 +1085,7 @@ for a in kees:
          if not flag:
             for b in tmp.torsion[a]:
                print("%-1s%s" %(a,b[0]))
-         else: # known special cases 
+         else: # known special cases
             if a == 'X -D4-J4-X ':
                 print("%-1s%s" %(a,tmp.torsion[a][1][0]))
             elif a == 'X -D4-J3-X ':
@@ -1133,10 +1131,10 @@ print('''
   A   Q2  0000.     0000.                                4.  flag for fast water
 
 J1  J1  J2  J3  J4
-D2  D2  D3  D4  
+D2  D2  D3  D4
 
 MOD4      RE
-  A           1.3870  0.0157             A Venstra et al JCC,8,(1992),963 
+  A           1.3870  0.0157             A Venstra et al JCC,8,(1992),963
   QN          1.6612  0.2100             O  OPLS
   QA          1.6612  0.2100             O  OPLS
   Q2          1.6612  0.2100             O  OPLS
@@ -1145,59 +1143,59 @@ MOD4      RE
   D3          1.9080  0.0860             Spellmeyer
   DA          1.9080  0.0860             Spellmeyer
   DJ          1.9080  0.0860             Spellmeyer
-  D2          1.9080  0.0860             cp C 
+  D2          1.9080  0.0860             cp C
   J1          1.8240  0.1700             OPLS
   J2          1.8240  0.1700             OPLS
   J3          1.8240  0.1700             OPLS
   J4          1.8240  0.1700             OPLS
   JJ          1.8240  0.1700             OPLS
   JA          1.8240  0.1700             OPLS
-  JN          1.8240  0.1700             OPLS  
+  JN          1.8240  0.1700             OPLS
   R1          1.75    0.061              F  Gough et al. JCC 13,(1992),963.
   R2          1.948   0.265              Cl Fox, JPCB,102,8070,(98),flex.mdl CHCl3
   R3          2.22    0.320              Br Junmei(?)
-  R4          2.35    0.40               I  JCC,7,(1986),230;  
+  R4          2.35    0.40               I  JCC,7,(1986),230;
   T4          2.0000  0.2500             S  W. Cornell CH3SH and CH3SCH3 FEP's
   TA          2.0000  0.2500             S  W. Cornell CH3SH and CH3SCH3 FEP's
   T2          2.0000  0.2500             S  W. Cornell CH3SH and CH3SCH3 FEP's
   T1          2.0000  0.2500             S  W. Cornell CH3SH and CH3SCH3 FEP's
-  
+
 END
 
-# hydrogen      
-TINKER    A      1    1 
-# carbon                        
-TINKER    D4     6    4 
-TINKER    D3     6    3 
-TINKER    DA     6    3 
-TINKER    DJ     6    3 
-TINKER    D2     6    2 
-# fluorine      
-TINKER    R1     9    1 
-# chloride      
-TINKER    R2    17    1  
-# bromine 
+# hydrogen
+TINKER    A      1    1
+# carbon
+TINKER    D4     6    4
+TINKER    D3     6    3
+TINKER    DA     6    3
+TINKER    DJ     6    3
+TINKER    D2     6    2
+# fluorine
+TINKER    R1     9    1
+# chloride
+TINKER    R2    17    1
+# bromine
 TINKER    R3    35    1
-# iodine        
-TINKER    R4    53    1 
-# nitrogen      
-TINKER    J4     7    4 
-TINKER    J3     7    3 
+# iodine
+TINKER    R4    53    1
+# nitrogen
+TINKER    J4     7    4
+TINKER    J3     7    3
 TINKER    JA     7    2
 TINKER    JN     7    2
 TINKER    J1     7    1
-# oxygen            
+# oxygen
 TINKER    QA     8    3
-TINKER    Q2     8    2 
-TINKER    Q1     8    1 
-TINKER    QN     8    1 
+TINKER    Q2     8    2
+TINKER    Q1     8    1
+TINKER    QN     8    1
 # sulfer
 TINKER    T4    16    4
 TINKER    TA    16    2
 TINKER    T2    16    2
 TINKER    T1    16    1
 ''')
-  
+
 os.unlink('tmp1.dat')
 os.unlink('tmp2.dat')
 os.unlink('tmp3.dat')
