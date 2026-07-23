@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 from chempy import bmin,feedback
 from chempy import io
 

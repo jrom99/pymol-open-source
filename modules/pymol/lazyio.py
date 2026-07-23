@@ -263,9 +263,9 @@ DESCRIPTION
 
     try:
         # register PyMOL-specific spec extensions
-        simplemmtf.levels[u'atom'][u'pymolReps'] = 0
-        simplemmtf.levels[u'atom'][u'pymolColor'] = 0
-        simplemmtf.encodingrules[u'pymolRepsList'] = (7, 0)
+        simplemmtf.levels['atom']['pymolReps'] = 0
+        simplemmtf.levels['atom']['pymolColor'] = 0
+        simplemmtf.encodingrules['pymolRepsList'] = (7, 0)
     except Exception as e:
         print(e)
 
@@ -279,22 +279,22 @@ DESCRIPTION
     def callback(state, segi, chain, resv, resi, resn, name, elem,
             x, y, z, reps, color, alt, formal_charge, b, q, ss):
         atoms.append({
-            u'modelIndex': state,
-            u'chainId': mmtfstr(segi),
-            u'chainName': mmtfstr(chain),
-            u'groupId': resv,
-            u'groupName': mmtfstr(resn),
-            u'atomName': mmtfstr(name),
-            u'element': mmtfstr(elem),
-            u'coords': (x, y, z),
-            u'altLoc': mmtfstr(alt),
-            u'formalCharge': formal_charge,
-            u'bFactor': b,
-            u'occupancy': q,
-            u'secStruct': ss_map.get(ss, -1),
-            u'insCode': mmtfstr(resi.lstrip('0123456789')),
-            u'pymolReps': reps,
-            u'pymolColor': color,
+            'modelIndex': state,
+            'chainId': mmtfstr(segi),
+            'chainName': mmtfstr(chain),
+            'groupId': resv,
+            'groupName': mmtfstr(resn),
+            'atomName': mmtfstr(name),
+            'element': mmtfstr(elem),
+            'coords': (x, y, z),
+            'altLoc': mmtfstr(alt),
+            'formalCharge': formal_charge,
+            'bFactor': b,
+            'occupancy': q,
+            'secStruct': ss_map.get(ss, -1),
+            'insCode': mmtfstr(resi.lstrip('0123456789')),
+            'pymolReps': reps,
+            'pymolColor': color,
         })
 
     atoms = []

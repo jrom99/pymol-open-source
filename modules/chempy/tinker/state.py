@@ -12,8 +12,6 @@
 #-*
 #Z* -------------------------------------------------------------------
 
-from __future__ import print_function
-
 from chempy import tinker,io,feedback
 from chempy.tinker import keyword
 import copy

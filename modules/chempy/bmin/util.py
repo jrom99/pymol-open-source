@@ -1,6 +1,4 @@
 # pymol
-from __future__ import print_function
-
 from chempy import Bond
 import copy
 import random

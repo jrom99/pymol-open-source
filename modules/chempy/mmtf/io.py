@@ -1,11 +1,6 @@
 '''
 Experimental MMTF (Macromolecular Transmission Format) I/O library
 '''
-
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import os
 import sys
 import itertools
@@ -17,12 +12,12 @@ try:
 except ImportError:
     import umsgpack as msgpack
 
-if True:
-    from urllib.request import urlopen
-    izip = zip
-    izip_longest = itertools.zip_longest
-    as_msgpack_key = lambda k: k if isinstance(k, str) else k.decode("utf-8")
-    buffer = lambda s, i=0: memoryview(s)[i:]
+from urllib.request import urlopen
+izip_longest = itertools.zip_longest
+def as_msgpack_key(k):
+    return k if isinstance(k, str) else k.decode("utf-8")
+def buffer(s, i=0):
+    return memoryview(s)[i:]
 
 # should be replaced with a more efficient numpy-array aware iterator
 def simpleiter(iterable):
@@ -249,5 +244,5 @@ class MmtfReader:
     def get_table_iter(self, keys, defaults=None):
         if defaults is None:
             return izip_longest(*[self.get_iter(k) for k in keys])
-        return izip(*[self.get_iter(k, itertools.repeat(d))
+        return zip(*[self.get_iter(k, itertools.repeat(d))
             for (k, d) in zip(keys, defaults)])

@@ -35,7 +35,7 @@ ARGUMENTS
     TZ = '%+05d' % (time.timezone / 36)
 
     version = cmd.get_version()
-    body = u'PyMOL %s\n' % version[0]
+    body = 'PyMOL %s\n' % version[0]
 
     if not compact:
         if version[3]:
@@ -115,7 +115,7 @@ def diagnostics_conda(versionselector=''):
             d = json.load(open(jsonfile))
             if not versionselector:
                 body += os.path.basename(jsonfile) + '\n'
-            body += u'conda build: {} {}\n'.format(d.get('build'),
+            body += 'conda build: {} {}\n'.format(d.get('build'),
                     d.get('schannel') or d.get('channel'))
     except BaseException as e:
         print(e)
@@ -124,7 +124,7 @@ def diagnostics_conda(versionselector=''):
 
 def diagnostics_platform(compact=False):
     import platform
-    body = u''
+    body = ''
 
     if not compact:
         body += '\nOperating System:\n'
@@ -140,20 +140,20 @@ def diagnostics_platform(compact=False):
 def diagnostics_qt():
     try:
         from pymol.Qt import QtCore
-        return u'{} {} (Qt {})\n'.format(
+        return '{} {} (Qt {})\n'.format(
                 QtCore.__name__.split('.')[0],
                 getattr(QtCore, "PYQT_VERSION_STR", "<N/A>"),
                 QtCore.QT_VERSION_STR)
     except Exception as e:
-        return u'({})\n'.format(e)
+        return '({})\n'.format(e)
 
 
 def diagnostics_python():
-    tmpl = (u'\nPython:\n'
-            u'{v}\n'
-            u'prefix={p}\n'
-            u'executable={exe}\n'
-            u'filesystemencoding={enc}\n')
+    tmpl = ('\nPython:\n'
+            '{v}\n'
+            'prefix={p}\n'
+            'executable={exe}\n'
+            'filesystemencoding={enc}\n')
     return tmpl.format(v=sys.version,
                        p=_unicode(sys.prefix),
                        exe=_unicode(sys.executable),
@@ -167,7 +167,7 @@ def diagnostics_env_vars():
     body = '\nQt, Python and PyMOL Environment Variables:\n'
     for key in sorted(os.environ):
         if re.search(r'^PY|QT|^LANG', key) and not (key == 'PYMOL_SCRIPTS'):
-            body += u'%s=%s\n' % (key, _unicode(os.environ[key]))
+            body += '%s=%s\n' % (key, _unicode(os.environ[key]))
 
     body += '\nPATH:\n'
     body += textwrap.fill(_unicode(os.getenv('PATH', '')), 78) + '\n'

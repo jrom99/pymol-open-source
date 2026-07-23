@@ -88,10 +88,10 @@ EXAMPLES
 
 SEE ALSO
 
-    cd, pwd, system   
+    cd, pwd, system
         '''
         if pattern is None:
-            pattern = u"*"
+            pattern = "*"
         else:
             pattern = exp_path(pattern)
         if '*' not in pattern:
@@ -117,7 +117,7 @@ DESCRIPTION
 
 USAGE
 
-    system command 
+    system command
 
 PYMOL API
 

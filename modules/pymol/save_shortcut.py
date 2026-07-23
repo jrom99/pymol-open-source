@@ -3,7 +3,7 @@ import os
 import threading
 import json
 
-_SHORTCUTS_SAVE_FILE = u'~/.pymol/shortcuts_save.json'
+_SHORTCUTS_SAVE_FILE = '~/.pymol/shortcuts_save.json'
 
 from os.path import expanduser, expandvars
 
@@ -47,7 +47,7 @@ def load_shortcuts_dict():
         with open(save_file) as save_dict_file:
             save_dict = json.load(save_dict_file)
     except FileNotFoundError as file_error:
-        # This represents the case where no save file has been created yet and should pass quietly. 
+        # This represents the case where no save file has been created yet and should pass quietly.
         pass
     except Exception as e:
         print("No shortcut save file has been loaded.")
