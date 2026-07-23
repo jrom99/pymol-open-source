@@ -115,7 +115,7 @@ if True:
 
     def set_bond(name, value, selection1, selection2=None,
                  state=0, updates=1, log=0, quiet=1, _self=cmd):
-        ''' 
+        '''
 DESCRIPTION
 
     "set_bond" changes per-bond settings for all bonds which exist
@@ -145,7 +145,7 @@ NOTES
     The following per-bond settings are currently implemented.  Others
     may seem to be recognized but will currently have no effect when
     set at the per-bond level.
-    
+
     * valence
     * line_width
     * line_color
@@ -156,7 +156,7 @@ NOTES
     Note that if you attempt to use the "set" command with a per-bond
     setting over a selection of atoms, the setting change will appear
     to take, but no change will be observed.
-    
+
 PYMOL API
 
     cmd.set_bond ( string name, string value,
@@ -212,7 +212,7 @@ EXAMPLES
     set line_width, 3
 
     set surface_color, white, 1hpv
-    
+
     set sphere_scale, 0.5, elem C
 
 NOTES
@@ -230,7 +230,7 @@ NOTES
     The following per-atom settings are currently implemented.  Others
     may seem to be recognized but will have no effect when set on a
     per-atom basis.
-    
+
     * sphere_color
     * surface_color
     * mesh_color
@@ -240,12 +240,12 @@ NOTES
     * ribbon_color
     * transparency (for surfaces)
     * sphere_transparency
-    
+
     Note that if you attempt to use the "set" command with a per-bond
     setting over a selection of atoms, the setting change will appear
     to take, but no change will be observed.  Please use the
     "set_bond" command for per-bond settings.
-    
+
 
 PYMOL API
 
@@ -255,7 +255,7 @@ PYMOL API
 SEE ALSO
 
     get, set_bond
-    
+
 '''
         selection = selector.process(selection)
         index = _get_index(name)
@@ -292,7 +292,7 @@ EXAMPLE
     unset surface_color, 1hpv
 
     unset sphere_scale, elem C
-    
+
 NOTES
 
     If selection is not provided, unset changes the named global
@@ -309,7 +309,7 @@ PYMOL API
 SEE ALSO
 
     unset_deep, set, set_bond
-    
+
         '''
         selection = selector.process(selection)
         index = _get_index(str(name))
@@ -326,7 +326,7 @@ SEE ALSO
 DESCRIPTION
 
     "unset_bond" removes a per-bond setting for a given set of bonds.
-    
+
 USAGE
 
     unset name [,selection [, selection [,state ]]]
@@ -359,7 +359,7 @@ DESCRIPTION
 USAGE
 
     get name [, selection [, state ]]
-    
+
 EXAMPLE
 
     get line_width
@@ -371,13 +371,13 @@ ARGUMENTS
     selection = string: object name (selections not yet supported)
 
     state = integer: state number
-    
+
 NOTES
 
     "get" currently only works with global, per-object, and per-state
     settings.  Atom level settings get be queried with "iterate" (e.g.
     iterate all, print s.line_width)
-    
+
 PYMOL API
 
     cmd.get(string name, string object, int state, int quiet)
@@ -448,7 +448,7 @@ SEE ALSO
 
     def get_bond(name, selection1, selection2=None,
                  state=0, updates=1, quiet=1, _self=cmd):
-        ''' 
+        '''
 DESCRIPTION
 
     "get_bond" gets per-bond settings for all bonds which exist
@@ -476,7 +476,7 @@ NOTES
     The following per-bond settings are currently implemented.  Others
     may seem to be recognized but will currently have no effect when
     set at the per-bond level.
-    
+
     * valence
     * line_width
     * line_color

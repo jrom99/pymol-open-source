@@ -14,10 +14,9 @@ License: BSD-2-Clause
 import sys
 import os
 import pymol
-from pmg_tk import startup
+# from pmg_tk import startup
 
 __all__ = [
-    'startup',
     'get_pmgapp',
     'get_tk_root',
     'get_tk_focused',

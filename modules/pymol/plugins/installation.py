@@ -56,8 +56,8 @@ def cmp_version(v1, v2):
         v1_parts = list(map(int, v1.split('.')))
         v2_parts = list(map(int, v2.split('.')))
         return (v1_parts > v2_parts) - (v1_parts < v2_parts)
-    except:
-        print(' Warning: Version parsing failed for', v1, 'and/or', v2)
+    except Exception:
+        print(f' Warning: Version parsing failed for {v1} and/or {v2}')
         return 0
 
 def get_name_and_ext(ofile):
@@ -146,7 +146,7 @@ def get_plugdir(parent=None):
     Get plugin directory, ask user if startup path has more than one entry
     '''
     from . import get_startup_path
-    plugdirs = get_startup_path()
+    plugdirs = [*get_startup_path(), get_default_user_plugin_path()]
 
     if len(plugdirs) == 1:
         return plugdirs[0]
@@ -189,7 +189,7 @@ def installPluginFromFile(ofile, parent=None, plugdir=None):
     Takes python (.py) files and archives which contain a python module.
     '''
     import shutil
-    from . import startup, PluginInfo
+    from . import PluginInfo
     from . import get_startup_path, set_startup_path, pref_get
     from .legacysupport import tkMessageBox, get_tk_focused
 
@@ -205,6 +205,12 @@ def installPluginFromFile(ofile, parent=None, plugdir=None):
         plugdir = get_plugdir()
         if not plugdir:
             return
+
+    if not os.path.exists(plugdir):
+        if not askyesno("Warning", f"Plugin directory {plugdir!r} is missing. Should it be created?", parent=parent):
+            showinfo("Error", "Installation aborted", parent=parent)
+            return
+        os.makedirs(plugdir)
 
     if not is_writable(plugdir):
         user_plugdir = get_default_user_plugin_path()
@@ -225,7 +231,7 @@ def installPluginFromFile(ofile, parent=None, plugdir=None):
         plugdir = user_plugdir
 
     if plugdir not in plugdirs:
-        set_startup_path([plugdir] + get_startup_path(True))
+        set_startup_path([plugdir, *get_startup_path(True)])
 
     def remove_if_exists(pathname, ask):
         '''
@@ -239,11 +245,11 @@ def installPluginFromFile(ofile, parent=None, plugdir=None):
 
         if ask:
             if is_dir:
-                msg = 'Directory "%s" already exists, overwrite?' % pathname
+                msg = f'Directory {pathname!r} already exists, overwrite?'
             else:
-                msg = 'File "%s" already exists, overwrite?' % pathname
+                msg = f'File {pathname!r} already exists, overwrite?'
             if not tkMessageBox.askyesno('Confirm', msg, parent=parent):
-                raise InstallationCancelled('will not overwrite "%s"' % pathname)
+                raise InstallationCancelled(f'will not overwrite {pathname!r}')
 
         if is_dir:
             shutil.rmtree(pathname)
@@ -335,8 +341,7 @@ def installPluginFromFile(ofile, parent=None, plugdir=None):
             else:
                 os.remove(pathname)
 
-    prefix = startup.__name__
-    info = PluginInfo(name, mod_file, prefix + '.' + name)
+    info = PluginInfo(name, mod_file, f"pymol.user_plugins.{name}")
 
     if info.load(force=1):
         showinfo('Success', 'Plugin "%s" has been installed.' % name, parent=parent)

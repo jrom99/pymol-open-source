@@ -63,7 +63,7 @@ class Repository():
         '''
         try:
             return self.list_indexfile()
-        except:
+        except Exception:
             return self.list_scan()
 
     def list_indexfile(self):

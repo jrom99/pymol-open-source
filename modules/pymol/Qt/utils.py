@@ -1,4 +1,4 @@
-from pymol.Qt import *
+from pymol.Qt import QtWidgets, QtCore, PYQT_NAME, QtGui
 
 import shutil
 import subprocess

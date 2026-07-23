@@ -1,6 +1,5 @@
 from pymol import setting
-from pymol.Qt import QtGui, QtWidgets
-from pymol.Qt import QtCore, QtCoreModels
+from pymol.Qt import QtGui, QtWidgets, QtCore, QtCoreModels
 Qt = QtCore.Qt
 QSI = QtGui.QStandardItem  # For brevity
 

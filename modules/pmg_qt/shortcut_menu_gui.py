@@ -203,7 +203,7 @@ class PyMOLShortcutMenu(QtWidgets.QWidget):
 
     def refresh_populate(self):
         '''
-        Called through the refresh button. 
+        Called through the refresh button.
         '''
         self.shortcut_manager.check_key_mappings()
         self.populateData()
@@ -318,7 +318,7 @@ class PyMOLShortcutMenu(QtWidgets.QWidget):
         '''
         Returns string of keyevent used to populate create key menu.
         Provides filtering to the keyevents, returning a list of the accepted strings.
-        raw_string: string from keyevent_to_string 
+        raw_string: string from keyevent_to_string
         '''
         split_string = raw_string.split()
         process_list = []

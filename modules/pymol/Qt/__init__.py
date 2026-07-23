@@ -9,9 +9,7 @@ http://pyqt.sourceforge.net/Docs/PyQt5/pyqt4_differences.html
 """
 
 DEBUG = False
-
 PYQT_NAME = None
-QtWidgets = None
 
 try:
     from pymol._Qt_pre import *
@@ -60,11 +58,11 @@ if not PYQT_NAME and qt_api in ('', 'pyside6'):
 if not PYQT_NAME:
     raise ImportError(__name__)
 
+assert QtWidgets
+
 # qtpy compatibility
 os.environ['QT_API'] = PYQT_NAME.lower()
 
-if QtWidgets is None:
-    QtWidgets = QtGui
 
 if hasattr(QtCore, 'QAbstractProxyModel'):
     QtCoreModels = QtCore
