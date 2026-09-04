@@ -355,6 +355,31 @@ class PopupOnException:
             msg = str(e) or 'unknown error'
             msgbox = QMB(QMB.Icon.Critical, 'Error', msg, QMB.StandardButton.Close, parent)
             msgbox.setDetailedText(''.join(traceback.format_tb(tb)))
+
+            class Resizable(QtCore.QObject):
+                def eventFilter(self, obj, event):
+                    if event.type() in (
+                        QtCore.QEvent.Type.LayoutRequest,
+                        QtCore.QEvent.Type.Resize,
+                    ):
+                        if event.type() == QtCore.QEvent.Type.Resize:
+                            result = super().eventFilter(obj, event)
+                        else:
+                            result = False
+
+                        details = obj.findChild(QtWidgets.QTextEdit)
+                        if details:
+                            details.setMaximumSize(16777215, 16777215)
+
+                        obj.setMaximumSize(16777215, 16777215)
+
+                        return result
+
+                    return super().eventFilter(obj, event)
+
+            msgbox.setSizeGripEnabled(True)
+            msgbox.installEventFilter(Resizable())
+
             msgbox.exec()
 
         return True
