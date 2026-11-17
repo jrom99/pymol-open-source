@@ -32,8 +32,8 @@ dev = [
   "msgpack",
   "pillow",
   "PySide6",
-  "pytest<9",
-  "requests",
+  "pytest",
+  "requests"
 ]
 
 [project.urls]
@@ -51,4 +51,3 @@ where = ["modules"]
 
 [tool.setuptools.package-data]
 pmg_qt = ["forms/*.ui"]
-

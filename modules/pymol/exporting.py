@@ -781,6 +781,44 @@ EXAMPLES
             yield fname, osele, ostate
 
 
+    def _write_file_atomic(filename, contents):
+        '''
+        Write bytes to filename. A new or existing regular file is replaced
+        with a temporary file from the same directory, so that a failed write
+        (e.g. disk full) leaves an existing file intact.
+        '''
+        handle = None
+
+        if not os.path.lexists(filename) or (os.path.isfile(filename) and
+                not os.path.islink(filename) and os.access(filename, os.W_OK)):
+            tmpname = '%s.%s.tmp' % (filename, os.urandom(4).hex())
+            try:
+                # unlike tempfile.mkstemp, this honors the umask
+                handle = open(tmpname, 'xb')
+            except PermissionError:
+                # e.g. writable file in a non-writable directory
+                pass
+
+        if handle is None:
+            # symlink, device, read-only file, ...
+            with open(filename, 'wb') as handle:
+                handle.write(contents)
+            return
+
+        try:
+            with handle:
+                handle.write(contents)
+            if os.path.exists(filename):
+                import shutil
+                shutil.copymode(filename, tmpname)
+            os.replace(tmpname, filename)
+        except BaseException:
+            import contextlib
+            with contextlib.suppress(OSError):
+                os.remove(tmpname)
+            raise
+
+
     def save(filename, selection='(all)', state=-1, format='', ref='',
              ref_state=-1, quiet=1, partial=0, *, _self=cmd):
         '''
@@ -808,8 +846,12 @@ NOTES
 
     The file format is automatically chosen if the extesion is one of
     the supported output formats: pdb, pqr, mol, sdf, pkl, pkla, mmd, out,
-    dat, mmod, cif, pov, png, pse, psw, aln, fasta, obj, mtl, wrl, dae, idtf,
-    or mol2.
+    dat, mmod, cif, pov, png, pse, psw, aln, fasta, obj, mtl, wrl, dae, usda,
+    usdz, idtf, glb, gltf, or mol2.
+
+    glb export requires PyMOL to be compiled with native glTF support
+    (--json=true), see cmd.get_capabilities(). Without it, gltf export
+    falls back to the external collada2gltf program.
 
     If the file format is not recognized, then a PDB file is written
     by default.
@@ -913,15 +955,12 @@ SEE ALSO
 
             if zipped == 'gz':
                 import gzip
-                fopen = gzip.open
-            else:
-                fopen = open
-                if zipped == 'bz2':
-                    import bz2
-                    contents = bz2.compress(contents)
+                contents = gzip.compress(contents)
+            elif zipped == 'bz2':
+                import bz2
+                contents = bz2.compress(contents)
 
-            with fopen(filename, 'wb') as handle:
-                handle.write(contents)
+            _write_file_atomic(filename, contents)
             r = DEFAULT_SUCCESS
 
         if _self._raising(r): raise QuietException
@@ -985,6 +1024,74 @@ SEE ALSO
         i = {'mtl': 0, 'obj': 1}.get(format)
         return _self.get_mtl_obj()[i]
 
+    def _usdz_package(member_name, contents):
+        '''
+        Package one stored USD layer with the data offset aligned to 64 bytes,
+        as required by the USDZ specification.
+        '''
+        import io
+        import struct
+        import zipfile
+
+        # A ZIP64 local header carries an additional extra field, which would
+        # shift the payload away from the computed alignment boundary. This is
+        # the same condition which makes zipfile pick a ZIP64 header.
+        if len(contents) * 1.05 > zipfile.ZIP64_LIMIT:
+            raise pymol.CmdException(
+                'USDZ layer of %d bytes is too large for the aligned, '
+                'uncompressed package format' % len(contents))
+
+        member_name_bytes = member_name.encode('utf-8')
+        local_header_size = 30 + len(member_name_bytes)
+        extra_size = (-local_header_size) % 64
+
+        # ZIP extra fields need a four-byte header. If less than four bytes
+        # would be needed, move to the following alignment boundary.
+        if 0 < extra_size < 4:
+            extra_size += 64
+
+        info = zipfile.ZipInfo(member_name)
+        info.compress_type = zipfile.ZIP_STORED
+        info.create_system = 3
+        info.external_attr = 0o100644 << 16
+
+        if extra_size:
+            payload_size = extra_size - 4
+            info.extra = (
+                struct.pack('<HH', 0x1986, payload_size) +
+                b'\0' * payload_size)
+
+        buffer = io.BytesIO()
+
+        try:
+            with zipfile.ZipFile(buffer, 'w',
+                                 compression=zipfile.ZIP_STORED,
+                                 allowZip64=False) as archive:
+                archive.writestr(info, contents)
+        except zipfile.LargeZipFile as ex:
+            raise pymol.CmdException(
+                'USDZ package would require ZIP64, which breaks the '
+                '64-byte alignment: %s' % ex)
+
+        return buffer.getvalue()
+
+    def _get_usdz(*, _self=cmd):
+        '''
+        USDZ package of the currently displayed geometry for AR viewers,
+        which contains one ASCII USD layer.
+
+        Unlike "get_usda", the scene is scaled to fit within one meter and
+        stands centered on the ground, and spheres, sticks and cones are kept
+        as compact analytic prims where possible.
+        '''
+        with _self.lockcm:
+            contents = _cmd.get_usda(_self._COb, 1)
+
+        if not contents:
+            raise pymol.CmdException('no geometry available for USDZ export')
+
+        return _usdz_package('scene.usda', contents.encode())
+
     savefunctions = {
         'cif': get_str, # mmCIF
         'xyz': get_str,
@@ -1009,7 +1116,10 @@ SEE ALSO
         'png': png,
 
         # no arguments (some have a "version" argument)
+        'glb': 'pymol.querying:get_glb',
         'dae': 'pymol.querying:get_collada',
+        'usda': 'pymol.querying:get_usda',
+        'usdz': _get_usdz,
         'gltf': 'pymol.querying:get_gltf',
         'wrl': 'pymol.querying:get_vrml',
         'pov': 'pymol.querying:get_povray',
